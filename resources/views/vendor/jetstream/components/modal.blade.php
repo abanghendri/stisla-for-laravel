@@ -4,31 +4,29 @@
 $id = $id ?? md5($attributes->wire('model'));
 
 switch ($maxWidth ?? '') {
-    case 'sm':
-        $maxWidth = ' modal-sm';
-        break;
-    case 'md':
-        $maxWidth = '';
-        break;
-    case 'lg':
-        $maxWidth = ' modal-lg';
-        break;
-    case 'xl':
-        $maxWidth = ' modal-xl';
-        break;
-    case '2xl':
-    default:
-        $maxWidth = '';
-        break;
+case 'sm':
+$maxWidth = ' modal-sm';
+break;
+case 'md':
+$maxWidth = '';
+break;
+case 'lg':
+$maxWidth = ' modal-lg';
+break;
+case 'xl':
+$maxWidth = ' modal-xl';
+break;
+case '2xl':
+default:
+$maxWidth = '';
+break;
 }
 @endphp
 
 <!-- Modal -->
-<div 
-    x-data="{
+<div data-backdrop='false' x-data="{
         show: @entangle($attributes->wire('model')).defer,
-    }"
-    x-init="() => {
+    }" x-init="() => {
         let modal = $('#{{ $id }}');
         $watch('show', value => {
             if (value) {
@@ -41,16 +39,13 @@ switch ($maxWidth ?? '') {
         modal.on('hide.bs.modal', function () {
             show = false
         })
-    }"
-    wire:ignore.self 
-    class="modal fade" 
-    tabindex="-1" 
-    id="{{ $id }}" 
-    aria-labelledby="{{ $id }}" 
-    aria-hidden="true"
-    x-ref="{{ $id }}"
->
+    }" wire:ignore.self class="modal fade" tabindex="-1" id="{{ $id }}" aria-labelledby="{{ $id }}" aria-hidden="true"
+    x-ref="{{ $id }}">
     <div class="modal-dialog{{ $maxWidth }}">
         {{ $slot }}
     </div>
 </div>
+
+
+
+</style>

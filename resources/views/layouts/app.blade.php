@@ -1,43 +1,71 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        <title>{{ config('app.name', 'Laravel') }}</title>
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no" name="viewport">
+    <title>{{ config('app.name', 'Laravel') }}</title>
 
-        <!-- Fonts -->
-        <link href="https://fonts.googleapis.com/css?family=Nunito:400,600,700" rel="stylesheet">
+    <!-- General CSS Files -->
 
-        <!-- Styles -->
-        <link rel="stylesheet" href="{{ mix('css/app.css') }}">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css"
+        integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/css?family=Nunito:400,600,700" rel="stylesheet">
 
-        @livewireStyles
+    <!-- CSS Libraries -->
 
-        <!-- Scripts -->
-        <script src="{{ mix('js/app.js') }}" defer></script>
-    </head>
-    <body class="font-sans antialiased bg-light">
-        <x-jet-banner />
-        @livewire('navigation-menu')
+    <!-- Template CSS -->
+    <link rel="stylesheet" href="{{ mix('css/app.css') }}">
+    <link rel="stylesheet" href="{{ mix('css/components.css') }}">
 
-        <!-- Page Heading -->
-        <header class="d-flex py-3 bg-white shadow-sm border-bottom">
-            <div class="container">
-                {{ $header }}
+</head>
+
+<body>
+    <div id="app">
+        <div class="main-wrapper">
+            <div class="navbar-bg"></div>
+            <!-- <x-jet-banner /> -->
+
+            @include('layouts.topbar')
+            @include('layouts.sidebar')
+
+            <!-- Main Content -->
+            <div class="main-content">
+                <section class="section">
+                    <div class="section-header">
+                        <h1> {{ $header }}</h1>
+                    </div>
+
+                    <div class="section-body">
+                        {{ $slot }}
+                    </div>
+                </section>
             </div>
-        </header>
+            <footer class="main-footer">
+                <div class="footer-left">
+                    Copyright &copy; 2018 <div class="bullet"></div> Design By <a href="https://nauval.in/">Muhamad
+                        Nauval Azhar</a>
+                </div>
+                <div class="footer-right">
+                    2.3.0
+                </div>
+            </footer>
+        </div>
+    </div>
+    stack('modals')
 
-        <!-- Page Content -->
-        <main class="container my-5">
-            {{ $slot }}
-        </main>
+    @livewireScripts
 
-        @stack('modals')
+    @stack('scripts')
+    <!-- General JS Scripts -->
 
-        @livewireScripts
 
-        @stack('scripts')
-    </body>
+    <!-- JS Libraies -->
+
+    <!-- Template JS File -->
+    <script src="{{ mix('js/app.js')}}"></script>
+
+    <!-- Page Specific JS File -->
+</body>
+
 </html>
