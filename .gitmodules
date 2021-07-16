@@ -1,0 +1,3 @@
+[submodule "stisla"]
+	path = stisla
+	url = ./public/stisla
