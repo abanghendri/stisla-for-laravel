@@ -17,6 +17,13 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::middleware(['auth:sanctum', 'verified'])->get('/dashboard', function () {
-    return view('dashboard');
-})->name('dashboard');
+Route::middleware(['auth:sanctum', 'verified'])->group(function(){
+
+    Route::get('/dashboard', function () {
+        return view('dashboard');
+    })->name('dashboard');
+
+    Route::get('/user',\App\Http\Livewire\User::class)->name('user');
+    Route::get('/user/roles',\App\Http\Livewire\User\Roles::class)->name('roles');
+    Route::get('/permissions',\App\Http\Livewire\Permissions::class)->name('permissions');
+});

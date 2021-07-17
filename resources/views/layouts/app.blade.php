@@ -13,16 +13,18 @@
     <link href="https://fonts.googleapis.com/css?family=Nunito:400,600,700" rel="stylesheet">
 
     <!-- CSS Libraries -->
-
+    <link rel="stylesheet" href="{{ asset('vendor/iziToast/iziToast.min.css') }}">
     <!-- Template CSS -->
-    <link rel="stylesheet" href="{{ mix('css/app.css') }}">
-    <link rel="stylesheet" href="{{ mix('css/components.css') }}">
+    <link rel="stylesheet"
+        href="{{ mix('css/app.css') }}?_{!! substr(str_shuffle('0123456789AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz'),1,12) !!}">
+    <link rel="stylesheet"
+        href="{{ mix('css/components.css') }}?_{!! substr(str_shuffle('0123456789AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz'),1,12) !!}">
 
 </head>
 
 <body>
     <div id="app">
-        <div class="main-wrapper">
+        <div class="main-wrapper main-wrapper-1">
             <div class="navbar-bg"></div>
             <!-- <x-jet-banner /> -->
 
@@ -31,15 +33,19 @@
 
             <!-- Main Content -->
             <div class="main-content">
-                <section class="section">
+                {{ $slot }}
+                <!-- <section class="section">
                     <div class="section-header">
-                        <h1> {{ $header }}</h1>
+                        <h1> </h1>
+                        <div class="section-header-button">
+                            <a href="features-post-create.html" class="btn btn-primary">Add New</a>
+                        </div>
                     </div>
 
                     <div class="section-body">
-                        {{ $slot }}
+                        
                     </div>
-                </section>
+                </section> -->
             </div>
             <footer class="main-footer">
                 <div class="footer-left">
@@ -56,7 +62,7 @@
 
     @livewireScripts
 
-    @stack('scripts')
+
     <!-- General JS Scripts -->
 
 
@@ -64,8 +70,11 @@
 
     <!-- Template JS File -->
     <script src="{{ mix('js/app.js')}}"></script>
-
+    <script src="{{ asset('vendor/iziToast/iziToast.min.js') }}"></script>
     <!-- Page Specific JS File -->
+    @stack('scripts')
+
+
 </body>
 
 </html>
