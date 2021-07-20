@@ -17,7 +17,8 @@
                             <ul class="nav nav-pills w-100">
                                 <li class="nav-item">
                                     <a class="nav-link active" href="#">All <span
-                                            class="badge badge-white">{{ count($roles) }}</span></a>
+                                            class="badge badge-white">{{ count($roles) }}
+                                            {{ print_r($selectedItems)}}</span></a>
                                 </li>
                                 <!-- <li class="nav-item">
                                     <a class="nav-link" href="#">Trash <span class="badge badge-primary">0</span></a>
@@ -79,8 +80,9 @@
                                         <tr>
                                             <td class="text-center pt-2">
                                                 <div class="custom-checkbox custom-control">
-                                                    <input type="checkbox" data-checkboxes="mygroup"
-                                                        class="custom-control-input" id="checkbox-2">
+                                                    <input type="checkbox" wire:click="multiple({{ $role->id }} )"
+                                                        data-checkboxes="mygroup" class="custom-control-input"
+                                                        id="checkbox-2">
                                                     <label for="checkbox-2" class="custom-control-label">&nbsp;</label>
                                                 </div>
                                             </td>

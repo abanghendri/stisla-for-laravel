@@ -3902,7 +3902,7 @@ window.addEventListener('confirm-delete', function (event) {
     if (willDelete) {
       livewire.emit('delete', event.detail.item);
     } else {
-      swal("Your imaginary file is safe!");
+      swal("You cancel the action, your data is save!");
     }
   });
 });

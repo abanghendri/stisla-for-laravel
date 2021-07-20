@@ -11,9 +11,9 @@
             </div>
 
             @if (session('status'))
-                <div class="alert alert-success" role="alert">
-                    {{ session('status') }}
-                </div>
+            <div class="alert alert-success" role="alert">
+                {{ session('status') }}
+            </div>
             @endif
 
             <x-jet-validation-errors class="mb-3" />
@@ -27,9 +27,10 @@
                 </div>
 
                 <div class="d-flex justify-content-end mt-4">
-                    <x-jet-button>
+                    <button type="submit" class="btn btn-primary btn-lg btn-block" tabindex="4">
+                        {{ __('Log in') }}
                         {{ __('Email Password Reset Link') }}
-                    </x-jet-button>
+                    </button>
                 </div>
             </form>
         </div>

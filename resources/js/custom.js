@@ -32,7 +32,7 @@ window.addEventListener('confirm-delete', event => {
                 livewire.emit('delete', event.detail.item)
 
             } else {
-                swal("Your imaginary file is safe!");
+                swal("You cancel the action, your data is save!");
             }
         });
 });

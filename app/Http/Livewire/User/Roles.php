@@ -14,6 +14,7 @@ class Roles extends Component
     public $search;
 
     public $selectedItem;
+    public $selectedItems = [];
 
     protected $paginationTheme = 'bootstrap';
     protected $listeners = ['delete'];
@@ -28,6 +29,11 @@ class Roles extends Component
         
     }
 
+    public function multiple($item){
+        if(array_search($item,$this->selectedItems) >= 0){
+            $this->selectedItems[] = $item;
+        }
+    }
     
 
     public function open($mode, $item = null){
