@@ -3873,11 +3873,17 @@ window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 "use strict";
 
 
+window.addEventListener('openInputModal', function (event) {
+  $('#inputModal').modal('show');
+});
+window.addEventListener('closeInputModal', function (event) {
+  $('#inputModal').modal('hide');
+});
 window.addEventListener('openModal', function (event) {
-  $('.modal').modal('show');
+  $('#' + event.detail.modal).modal('show');
 });
 window.addEventListener('closeModal', function (event) {
-  $('.modal').modal('hide');
+  $('#' + event.detail.modal).modal('hide');
 });
 window.setTimeout(function () {
   $(".alert").fadeTo(500, 0).slideUp(500, function () {
@@ -3885,11 +3891,14 @@ window.setTimeout(function () {
   });
 }, 2000);
 window.addEventListener('success-nofitfy', function (event) {
-  swal(event.detail.ntitle, event.detail.nmessage, "success"); // iziToast.success({
-  //     title: event.detail.ntitle,
-  //     message: event.detail.nmessage,
-  //     position: 'topRight'
-  // });
+  swal(event.detail.ntitle, event.detail.nmessage, "success");
+});
+window.addEventListener('success-izi', function (event) {
+  iziToast.success({
+    title: event.detail.ntitle,
+    message: event.detail.nmessage,
+    position: 'topRight'
+  });
 });
 window.addEventListener('confirm-delete', function (event) {
   swal({
@@ -3900,7 +3909,12 @@ window.addEventListener('confirm-delete', function (event) {
     dangerMode: true
   }).then(function (willDelete) {
     if (willDelete) {
-      livewire.emit('delete', event.detail.item);
+      if (event.detail.item === 'multiple') {
+        livewire.emit('deleteSelected');
+        $('select').val('');
+      } else {
+        livewire.emit('delete', event.detail.item);
+      }
     } else {
       swal("You cancel the action, your data is save!");
     }

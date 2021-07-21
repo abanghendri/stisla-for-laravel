@@ -1,10 +1,16 @@
 "use strict";
 
+window.addEventListener('openInputModal', event => {
+    $('#inputModal').modal('show')
+});
+window.addEventListener('closeInputModal', event => {
+    $('#inputModal').modal('hide')
+});
 window.addEventListener('openModal', event => {
-    $('.modal').modal('show')
+    $('#' + event.detail.modal).modal('show')
 });
 window.addEventListener('closeModal', event => {
-    $('.modal').modal('hide')
+    $('#' + event.detail.modal).modal('hide')
 });
 window.setTimeout(function () {
     $(".alert").fadeTo(500, 0).slideUp(500, function () {
@@ -13,12 +19,15 @@ window.setTimeout(function () {
 }, 2000);
 window.addEventListener('success-nofitfy', event => {
     swal(event.detail.ntitle, event.detail.nmessage, "success");
-    // iziToast.success({
-    //     title: event.detail.ntitle,
-    //     message: event.detail.nmessage,
-    //     position: 'topRight'
-    // });
-})
+});
+window.addEventListener('success-izi', event => {
+    iziToast.success({
+        title: event.detail.ntitle,
+        message: event.detail.nmessage,
+        position: 'topRight'
+    });
+});
+
 window.addEventListener('confirm-delete', event => {
     swal({
             title: "Are you sure?",
@@ -29,7 +38,12 @@ window.addEventListener('confirm-delete', event => {
         })
         .then((willDelete) => {
             if (willDelete) {
-                livewire.emit('delete', event.detail.item)
+                if (event.detail.item === 'multiple') {
+                    livewire.emit('deleteSelected')
+                    $('select').val('');
+                } else {
+                    livewire.emit('delete', event.detail.item)
+                }
 
             } else {
                 swal("You cancel the action, your data is save!");

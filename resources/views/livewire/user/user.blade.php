@@ -15,16 +15,17 @@
                     <div class="card mb-0">
                         <div class="card-body">
                             <ul class="nav nav-pills w-100">
-                                <li class="nav-item">
+                                <li class="nav-item mr-1">
                                     <a class="nav-link active" href="#">All <span
-                                            class="badge badge-white">{{ count($roles) }}
+                                            class="badge badge-white">{{ count($users) }}
                                         </span></a>
                                 </li>
-                                <!-- <li class="nav-item">
-                                    <a class="nav-link" href="#">Trash <span class="badge badge-primary">0</span></a>
-                                </li> -->
+                                <li class="nav-item">
+                                    <a class="nav-link" href="#">Trash <span
+                                            class="badge badge-primary">{{ count($trash) }}</span></a>
+                                </li>
                                 <li class="nav-pill ml-auto">
-                                    @can('roles.create')
+                                    @can('users.create')
                                     <a class="nav-link active" href="#" wire:click="open('add')" data-toggle="tooltip"
                                         title="Add New"><i class="fa fa-plus" aria-hidden="true"></i></a>
                                     @endcan
@@ -40,10 +41,11 @@
                     <div class="card">
 
                         <div class="card-body">
+
                             <div class="float-left">
                                 <select class="form-control selectric">
                                     <option value=''>Action For Selected</option>
-                                    @can('users.delete')
+                                    @can('users.create')
                                     <option value='delete' wire:click="confirm(null, true)">Delete</option>
                                     @endcan
                                 </select>
@@ -72,30 +74,27 @@
                                                 <label for="checkbox-all" class="custom-control-label">&nbsp;</label>
                                             </div>
                                         </th>
-                                        <th>Roles</th>
-                                        <th>Guard</th>
+                                        <th>Name</th>
+                                        <th>Email</th>
                                         <th>Created At</th>
                                         <th></th>
                                     </thead>
                                     <tbody>
-                                        @foreach($roles as $role)
-                                        @if($role->name !== 'Super Admin' )
+                                        @foreach($users as $user)
                                         <tr>
                                             <td class="text-center pt-2">
-                                                @if($role->name !== 'Member')
                                                 <div class="custom-checkbox custom-control">
                                                     <input type="checkbox" data-checkboxes="mygroup"
                                                         wire:click="multiple" wire:model="selectedItems"
-                                                        class="custom-control-input" value="{{ $role->id }}"
-                                                        id="checkbox-{{ $role->id }}">
-                                                    <label for="checkbox-{{ $role->id }}"
+                                                        class="custom-control-input" value="{{ $user->id }}"
+                                                        id="checkbox-{{ $user->id }}">
+                                                    <label for="checkbox-{{ $user->id }}"
                                                         class="custom-control-label">&nbsp;</label>
                                                 </div>
-                                                @endif
                                             </td>
-                                            <td>{{ $role->name }}</td>
-                                            <td>{{ $role->guard_name }}</td>
-                                            <td>{{ $role->created_at }}</td>
+                                            <td>{{ $user->name }}</td>
+                                            <td><a href="mailto:{{ $user->email }}">{{ $user->email }}</a></td>
+                                            <td>{{ $user->created_at }}</td>
                                             <td>
 
                                                 <div class="dropdown d-inline mr-2">
@@ -106,32 +105,25 @@
                                                     </button>
                                                     <div class="dropdown-menu" x-placement="top-start"
                                                         style="position: absolute; transform: translate3d(0px, -10px, 0px); top: 0px; left: 0px; will-change: transform;">
-                                                        @can('roles.edit')
+                                                        @can('users.edit')
                                                         <a class="dropdown-item"
-                                                            wire:click="open('update', {{ $role->id }})"
+                                                            wire:click="open('update', {{ $user->id }})"
                                                             href="#">Edit</a>
-                                                        <a class="dropdown-item"
-                                                            wire:click="getPermissions({{ $role->id }})"
-                                                            href="#">Setting
-                                                            Permissions</a>
                                                         @endcan
-                                                        @can('roles.delete')
-                                                        @if($role->name !== 'Member')
-                                                        <a class="dropdown-item" wire:click="confirm({{ $role->id }})"
+                                                        @can('users.delete')
+                                                        <a class="dropdown-item" wire:click="confirm({{ $user->id }})"
                                                             href="#">Delete</a>
-                                                        @endif
                                                         @endcan
                                                     </div>
                                                 </div>
                                             </td>
                                         </tr>
-                                        @endif
                                         @endforeach
                                     </tbody>
                                 </table>
                             </div>
                             <div class="float-right">
-                                {{ $roles->links() }}
+                                {{ $users->links() }}
 
                             </div>
                         </div>
@@ -155,15 +147,48 @@
                 <div class="modal-body">
                     <form wire:submit.prevent="save">
                         <div class="form-group">
-                            <label for="name">Role's Name</label>
+                            <label for="name">Fullname</label>
                             <input type="hidden" value="" wire:model="selectedItem">
                             <input wire:model="name" autofocus='' name="name" type="text" id=""
-                                placeholder="Role's Name" class="form-control @error('name') is-invalid @enderror">
+                                placeholder="user's Name" class="form-control @error('name') is-invalid @enderror">
                             @error('name')
                             <span class="invalid-feedback">
                                 <strong>{{ $message }} </strong>
                             </span>
                             @enderror
+                            <label for="name">Email</label>
+                            <input wire:model="email" autofocus='' name="email" type="text" id=""
+                                placeholder="User's Email" class="form-control @error('email') is-invalid @enderror">
+                            @error('email')
+                            <span class="invalid-feedback">
+                                <strong>{{ $message }} </strong>
+                            </span>
+                            @enderror
+                            <label for="name">Password</label>
+                            <input wire:model="password" autofocus='' name="email" type="text" id=""
+                                placeholder="User's Password"
+                                class="form-control @error('password') is-invalid @enderror">
+                            @error('password')
+                            <span class="invalid-feedback">
+                                <strong>{{ $message }} </strong>
+                            </span>
+                            @enderror
+
+                            <div class="form-group">
+                                <label for="role">Role <span class="text-danger">*</span></label>
+                                <select name="role" wire:model="role" id=""
+                                    class="form-control @error('role') is-invalid @enderror">
+                                    <option value=""> -- Choose Role --</option>
+                                    @foreach($roles as $r)
+                                    <option value="{{ $r->name }}">{{ $r->name }}</option>
+                                    @endforeach
+                                </select>
+                                @error('role')
+                                <span class="invalid-feedback">
+                                    <strong>{{ $message }} </strong>
+                                </span>
+                                @enderror
+                            </div>
                         </div>
                     </form>
                 </div>
@@ -171,43 +196,6 @@
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                     <button type="button" wire:keydown.enter="save" wire:click="save"
                         class="btn btn-primary">Save</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-
-
-    <!-- Modal -->
-    <div wire:ignore.self class="modal fade" id="permissionsModal" tabindex="-1" role="dialog"
-        aria-labelledby="modelTitleId" aria-hidden="true">
-        <div class="modal-dialog modal-lg" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">{{ __('Setting the Permissions for ') }} {{ $name}}</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    @foreach($actions as $key=>$act)
-                    <div class="col-12 mb-3">
-                        <h6>{{ ucwords($key) }}</h6>
-                        @foreach($act as $k=>$a)
-                        <div class="custom-control custom-checkbox">
-                            <input wire:click="multiple" wire:model="selectedItems" type="checkbox"
-                                value="{{$key}}.{{$k}}" class="custom-control-input" id="select{{$key}}.{{$k}}">
-                            <label class="custom-control-label" for="select{{$key}}.{{$k}}">{{ $a }}</label>
-                        </div>
-
-                        @endforeach
-                    </div>
-                    @endforeach
-
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="submit" wire:click="updatePermission" class="btn btn-primary">Save</button>
                 </div>
             </div>
         </div>
