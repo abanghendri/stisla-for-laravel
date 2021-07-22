@@ -14,6 +14,18 @@ Install composer packages:
 composer update
 ```
 
+Install npm packages:
+```shell
+npm update
+```
+
+Run npm dev if you wish to modifie stisla:
+```shell
+npm run watch
+```
+
+And edit or overide your css in resources/saas ans resources/js and it will automatically build your mix css and js
+
 Copy and rename .env.example to .env, update the environmental variables and set an app key:
 ```shell
 php artisan key:generate
