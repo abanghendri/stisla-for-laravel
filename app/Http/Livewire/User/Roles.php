@@ -19,6 +19,12 @@ class Roles extends Component
 
     protected $paginationTheme = 'bootstrap';
     protected $listeners = ['delete','deleteSelected'];
+    protected $queryString = ['search'];
+
+    public function mount(){
+        $this->title = "User's Roles";
+        $this->search = request()->query('search', $this->search);
+    }
      
     public function render()
     {
@@ -82,12 +88,27 @@ class Roles extends Component
         $this->dispatchBrowserEvent('openModal',['modal' => 'inputModal']);
     }
 
-    public function confirm($item = null, $multiple = false){
-        if($multiple == true){
-            $this->dispatchBrowserEvent('confirm-delete',['item' => 'multiple']);
+    public function confirm($item = null, $multiple = false, $permanently = false){
+
+       $this->force = $permanently;
+        $this->selectedItem = $item;
+        
+        if($item === null && $multiple === true){
+            //multiple softDelete
+            $this->dispatchBrowserEvent('confirm-delete',['mode' => 'multiple','item' => null, 'for' => 'trash']);
         }
-        else{
-            $this->dispatchBrowserEvent('confirm-delete',['item' => $item]);
+        if($item === null && $multiple === true && $permanently === true){
+            //multiple force delete
+            $this->dispatchBrowserEvent('confirm-delete',['mode' => 'multiple', 'item' => null, 'for' => 'force']);
+        }
+        
+        if($item !== null && $multiple === false && $permanently === true){
+            // single force delete
+            $this->dispatchBrowserEvent('confirm-delete',['mode'=>'single','item' => $item, 'for' => 'force']);
+        }
+
+        if($item !== null && $multiple === false && $permanently === false){
+            $this->dispatchBrowserEvent('confirm-delete',['mode'=>'single','item' => $item, 'for' => 'trash']);
         }
     }
 
@@ -103,8 +124,8 @@ class Roles extends Component
         $this->dispatchBrowserEvent('openModal',['modal' => 'permissionsModal']);
     }
     
-    public function delete($item){
-        if(Role::where('id', $item)->delete()){
+    public function delete(){
+        if(Role::where('id', $this->selectedItem)->delete()){
             $this->dispatchBrowserEvent('success-izi',['ntitle' => 'Success', 'nmessage' =>"Role has been deleted"]);
         }
         return FALSE;

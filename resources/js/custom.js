@@ -28,25 +28,39 @@ window.addEventListener('success-izi', event => {
     });
 });
 
+
 window.addEventListener('confirm-delete', event => {
-    swal({
+
+    let swal_config = {
+        title: "Are you sure?",
+        text: "Data will be moved to trash tab. If you wish, you can restore or permanently delete later!",
+        icon: "warning",
+        buttons: true,
+        dangerMode: true,
+    }
+    if (event.detail.for == 'force') {
+        swal_config = {
             title: "Are you sure?",
-            text: "Once deleted, you will not be able to recover this data!",
+            text: "Data will be deleted from our database. Once deleted, you will not be able to recover this data!",
             icon: "warning",
             buttons: true,
             dangerMode: true,
-        })
+        };
+    }
+    swal(swal_config)
         .then((willDelete) => {
             if (willDelete) {
-                if (event.detail.item === 'multiple') {
+                if (event.detail.mode === 'multiple') {
                     livewire.emit('deleteSelected')
                     $('select').val('');
                 } else {
-                    livewire.emit('delete', event.detail.item)
+                    livewire.emit('delete')
                 }
+
 
             } else {
                 swal("You cancel the action, your data is save!");
             }
         });
+
 });

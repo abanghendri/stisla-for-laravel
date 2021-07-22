@@ -18,23 +18,27 @@ class User extends Component
            $email,
            $password,
            $selectedItem;
+    public $force = false;
     public $selectedItems = [];
     public $roles =  [];
 
     protected $paginationTheme = 'bootstrap';
-    protected $listeners = ['delete','deleteSelected'];
+    protected $listeners = ['delete','deleteSelected','test'];
+    protected $queryString = ['search'];
 
-
+ 
     public function mount(){
         $this->title = 'Users';
         $this->roles = Role::orderBy('id','DESC')->get();
+        $this->search = request()->query('search', $this->search);
     }
     
+   
     public function render()
     {
        
         return view('livewire.user.user',[
-             'users' => ($this->search === null ) ? ModelsUser::latest()->paginate(10) : ModelsUser::latest()->where('name', 'like', '%'.$this->search.'%')->paginate(10),
+             'users' => ($this->search === null ) ? ModelsUser::with('roles')->latest()->paginate(10) : ModelsUser::with('roles')->latest()->where('name', 'like', '%'.$this->search.'%')->paginate(10),
              'trash' => ($this->search === null ) ? ModelsUser::onlyTrashed()->paginate(10) : ModelsUser::onlyTrashed()->where('name', 'like', '%'.$this->search.'%')->paginate(10)
             ]);
     }
@@ -56,6 +60,23 @@ class User extends Component
         $this->title = $this->search = $this->role = $this->name =  $this->email = $this->password =  $this->selectedItem = null;
         unset($this->selectedItems);
         $this->selectedItems = [];
+        $this->force = false;
+    }
+
+    public function multiple($mode = null){
+        //nothin to do, this method just for collecting $this->selectedItems from checkboxes
+    }
+
+    public function deleteSelected(){
+        if($this->force === false){
+            Modelsuser::whereIn('id', $this->selectedItems)->delete();
+        }
+        else{
+            Modelsuser::onlyTrashed()->whereIn('id', $this->selectedItems)->forceDelete();
+
+        }
+        $this->clearAll();
+        $this->dispatchBrowserEvent('success-izi',['ntitle' => 'Success', 'nmessage' =>"Users has been deleted"]);
     }
 
     public function save(){
@@ -101,19 +122,38 @@ class User extends Component
         $this->dispatchBrowserEvent('closeModal',['modal' => 'inputModal']);
     }
 
-    public function confirm($item = null, $multiple = false){
-        if($multiple == true){
-            $this->dispatchBrowserEvent('confirm-delete',['item' => 'multiple']);
+    public function confirm($item = null, $multiple = false, $permanently = false){
+        $this->force = $permanently;
+        $this->selectedItem = $item;
+        
+        if($item === null && $multiple === true){
+            //multiple softDelete
+            $this->dispatchBrowserEvent('confirm-delete',['mode' => 'multiple','item' => null, 'for' => 'trash']);
         }
-        else{
-            $this->dispatchBrowserEvent('confirm-delete',['item' => $item]);
+        if($item === null && $multiple === true && $permanently === true){
+            //multiple force delete
+            $this->dispatchBrowserEvent('confirm-delete',['mode' => 'multiple', 'item' => null, 'for' => 'force']);
+        }
+        
+        if($item !== null && $multiple === false && $permanently === true){
+            // single force delete
+            $this->dispatchBrowserEvent('confirm-delete',['mode'=>'single','item' => $item, 'for' => 'force']);
+        }
+
+        if($item !== null && $multiple === false && $permanently === false){
+            $this->dispatchBrowserEvent('confirm-delete',['mode'=>'single','item' => $item, 'for' => 'trash']);
         }
     }
     
-    public function delete($item){
-        if(ModelsUser::where('id', $item)->delete()){
-            $this->dispatchBrowserEvent('success-izi',['ntitle' => 'Success', 'nmessage' =>"User has been deleted"]);
+    public function delete(){
+        if($this->force === false){
+            ModelsUser::where('id', $this->selectedItem)->delete();
         }
+        else{
+            ModelsUser::onlyTrashed()->find($this->selectedItem)->forceDelete();
+        }
+        $this->dispatchBrowserEvent('success-izi',['ntitle' => 'Success', 'nmessage' =>"User has been deleted"]);
+        $this->clearAll();
         return FALSE;
     }
 }

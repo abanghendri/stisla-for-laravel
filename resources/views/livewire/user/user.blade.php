@@ -1,4 +1,5 @@
 <div>
+
     <section class="section">
         <div class="section-header">
             <h1> {{  $title }}</h1>
@@ -14,14 +15,16 @@
                 <div class="col-12">
                     <div class="card mb-0">
                         <div class="card-body">
-                            <ul class="nav nav-pills w-100">
+                            <ul class="nav nav-pills w-100" role="tablist">
                                 <li class="nav-item mr-1">
-                                    <a class="nav-link active" href="#">All <span
+                                    <a class="nav-link active" id="main-tab" data-toggle="tab" href="#main" role="tab"
+                                        aria-controls="main" aria-selected="true">All <span
                                             class="badge badge-white">{{ count($users) }}
                                         </span></a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link" href="#">Trash <span
+                                    <a class="nav-link" id="trash-tab" data-toggle="tab" href="#trash" role="tab"
+                                        aria-controls="trash" aria-selected="false">Trash <span
                                             class="badge badge-primary">{{ count($trash) }}</span></a>
                                 </li>
                                 <li class="nav-pill ml-auto">
@@ -42,89 +45,197 @@
 
                         <div class="card-body">
 
-                            <div class="float-left">
-                                <select class="form-control selectric">
-                                    <option value=''>Action For Selected</option>
-                                    @can('users.create')
-                                    <option value='delete' wire:click="confirm(null, true)">Delete</option>
-                                    @endcan
-                                </select>
-                            </div>
-                            <div class="float-right">
-                                <form>
-                                    <div class="input-group">
-                                        <input wire:model="search" type="text" class="form-control"
-                                            placeholder="Search">
+                            <div class="tab-content" id="myTabContent">
+
+                                <!-- Main -->
+                                <div class="tab-pane fade show active" id="main" role="tabpanel"
+                                    aria-labelledby="main-tab">
+                                    <div class="float-left">
+                                        <select class="form-control selectric">
+                                            <option value=''>Action For Selected</option>
+                                            @can('users.create')
+                                            <option value='delete' wire:click="confirm(null, true)">Delete</option>
+                                            @endcan
+                                        </select>
+                                    </div>
+                                    <div class="float-right">
+                                        <form>
+                                            <div class="input-group">
+                                                <input wire:model="search" type="text" class="form-control"
+                                                    placeholder="Search">
+
+                                            </div>
+                                        </form>
+                                    </div>
+
+                                    <div class="clearfix mb-3"></div>
+
+                                    <div class="table-responsive">
+                                        <table class="table table-striped">
+                                            <thead>
+
+                                                <th class="text-center pt-2">
+                                                    <div class="custom-checkbox custom-checkbox-table custom-control">
+                                                        <input type="checkbox" data-checkboxes="mygroup"
+                                                            wire:click="multiple('all')" data-checkbox-role="dad"
+                                                            class="custom-control-input" id="checkbox-all">
+                                                        <label for="checkbox-all"
+                                                            class="custom-control-label">&nbsp;</label>
+                                                    </div>
+                                                </th>
+                                                <th>Name</th>
+                                                <th>Email</th>
+                                                <th>Role</th>
+                                                <th>Created At</th>
+                                                <th></th>
+                                            </thead>
+                                            <tbody>
+                                                @foreach($users as $user)
+                                                <tr>
+                                                    <td class="text-center pt-2">
+                                                        <div class="custom-checkbox custom-control">
+                                                            <input type="checkbox" data-checkboxes="mygroup"
+                                                                wire:click="multiple" wire:model="selectedItems"
+                                                                class="custom-control-input" value="{{ $user->id }}"
+                                                                id="checkbox-{{ $user->id }}">
+                                                            <label for="checkbox-{{ $user->id }}"
+                                                                class="custom-control-label">&nbsp;</label>
+                                                        </div>
+                                                    </td>
+                                                    <td>{{ $user->name }}</td>
+                                                    <td><a href="mailto:{{ $user->email }}">{{ $user->email }}</a></td>
+                                                    <td>{{ $user->roles[0]->name }}</td>
+                                                    <td>{{ $user->created_at }}</td>
+                                                    <td>
+
+                                                        <div class="dropdown d-inline mr-2">
+                                                            <button class="btn btn-primary " type="button"
+                                                                id="dropdownMenuButton" data-toggle="dropdown"
+                                                                aria-haspopup="true" aria-expanded="false">
+                                                                <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
+                                                            </button>
+                                                            <div class="dropdown-menu" x-placement="top-start"
+                                                                style="position: absolute; transform: translate3d(0px, -10px, 0px); top: 0px; left: 0px; will-change: transform;">
+                                                                @can('users.edit')
+                                                                <a class="dropdown-item"
+                                                                    wire:click="open('update', {{ $user->id }})"
+                                                                    href="#">Edit</a>
+                                                                @endcan
+                                                                @can('users.delete')
+                                                                <a class="dropdown-item"
+                                                                    wire:click="confirm({{ $user->id }})"
+                                                                    href="#">Delete</a>
+                                                                @endcan
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                @endforeach
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div class="float-right">
+                                        {{ $users->links() }}
 
                                     </div>
-                                </form>
-                            </div>
+                                </div>
+                                <!-- End Main -->
 
-                            <div class="clearfix mb-3"></div>
+                                <!-- Trash -->
+                                <div class="tab-pane fade" id="trash" role="tabpanel" aria-labelledby="trash-tab">
+                                    <div class="float-left">
+                                        <select class="form-control selectric">
+                                            <option value=''>Action For Selected</option>
+                                            @can('users.create')
+                                            <option value='deletePermanently' wire:click="confirm(null, true, true)">
+                                                Delete
+                                                Permanently
+                                            </option>
+                                            @endcan
+                                        </select>
+                                    </div>
+                                    <div class="float-right">
+                                        <form>
+                                            <div class="input-group">
+                                                <input wire:model="search" type="text" class="form-control"
+                                                    placeholder="Search">
 
-                            <div class="table-responsive">
-                                <table class="table table-striped">
-                                    <thead>
-
-                                        <th class="text-center pt-2">
-                                            <div class="custom-checkbox custom-checkbox-table custom-control">
-                                                <input type="checkbox" data-checkboxes="mygroup"
-                                                    wire:click="multiple('all')" data-checkbox-role="dad"
-                                                    class="custom-control-input" id="checkbox-all">
-                                                <label for="checkbox-all" class="custom-control-label">&nbsp;</label>
                                             </div>
-                                        </th>
-                                        <th>Name</th>
-                                        <th>Email</th>
-                                        <th>Created At</th>
-                                        <th></th>
-                                    </thead>
-                                    <tbody>
-                                        @foreach($users as $user)
-                                        <tr>
-                                            <td class="text-center pt-2">
-                                                <div class="custom-checkbox custom-control">
-                                                    <input type="checkbox" data-checkboxes="mygroup"
-                                                        wire:click="multiple" wire:model="selectedItems"
-                                                        class="custom-control-input" value="{{ $user->id }}"
-                                                        id="checkbox-{{ $user->id }}">
-                                                    <label for="checkbox-{{ $user->id }}"
-                                                        class="custom-control-label">&nbsp;</label>
-                                                </div>
-                                            </td>
-                                            <td>{{ $user->name }}</td>
-                                            <td><a href="mailto:{{ $user->email }}">{{ $user->email }}</a></td>
-                                            <td>{{ $user->created_at }}</td>
-                                            <td>
+                                        </form>
+                                    </div>
 
-                                                <div class="dropdown d-inline mr-2">
-                                                    <button class="btn btn-primary " type="button"
-                                                        id="dropdownMenuButton" data-toggle="dropdown"
-                                                        aria-haspopup="true" aria-expanded="false">
-                                                        <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
-                                                    </button>
-                                                    <div class="dropdown-menu" x-placement="top-start"
-                                                        style="position: absolute; transform: translate3d(0px, -10px, 0px); top: 0px; left: 0px; will-change: transform;">
-                                                        @can('users.edit')
-                                                        <a class="dropdown-item"
-                                                            wire:click="open('update', {{ $user->id }})"
-                                                            href="#">Edit</a>
-                                                        @endcan
-                                                        @can('users.delete')
-                                                        <a class="dropdown-item" wire:click="confirm({{ $user->id }})"
-                                                            href="#">Delete</a>
-                                                        @endcan
+                                    <div class="clearfix mb-3"></div>
+
+                                    <div class="table-responsive">
+                                        <table class="table table-striped">
+                                            <thead>
+
+                                                <th class="text-center pt-2">
+                                                    <div class="custom-checkbox custom-checkbox-table custom-control">
+                                                        <input type="checkbox" data-checkboxes="mytrash"
+                                                            wire:click="multiple('all')" data-checkbox-role="dad"
+                                                            class="custom-control-input" id="checkbox-all">
+                                                        <label for="checkbox-all"
+                                                            class="custom-control-label">&nbsp;</label>
                                                     </div>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                        @endforeach
-                                    </tbody>
-                                </table>
-                            </div>
-                            <div class="float-right">
-                                {{ $users->links() }}
+                                                </th>
+                                                <th>Name</th>
+                                                <th>Email</th>
+                                                <th>Role</th>
+                                                <th>Created At</th>
+                                                <th></th>
+                                            </thead>
+                                            <tbody>
+                                                @foreach($trash as $user)
+                                                <tr>
+                                                    <td class="text-center pt-2">
+                                                        <div class="custom-checkbox custom-control">
+                                                            <input type="checkbox" data-checkboxes="mytrash"
+                                                                wire:click="multiple" wire:model="selectedItems"
+                                                                class="custom-control-input" value="{{ $user->id }}"
+                                                                id="checkbox-{{ $user->id }}">
+                                                            <label for="checkbox-{{ $user->id }}"
+                                                                class="custom-control-label">&nbsp;</label>
+                                                        </div>
+                                                    </td>
+                                                    <td>{{ $user->name }}</td>
+                                                    <td><a href="mailto:{{ $user->email }}">{{ $user->email }}</a></td>
+                                                    <td>{{ $user->roles[0]->name }}</td>
+                                                    <td>{{ $user->created_at }}</td>
+                                                    <td>
 
+                                                        <div class="dropdown d-inline mr-2">
+                                                            <button class="btn btn-primary " type="button"
+                                                                id="dropdownMenuButton" data-toggle="dropdown"
+                                                                aria-haspopup="true" aria-expanded="false">
+                                                                <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
+                                                            </button>
+                                                            <div class="dropdown-menu" x-placement="top-start"
+                                                                style="position: absolute; transform: translate3d(0px, -10px, 0px); top: 0px; left: 0px; will-change: transform;">
+                                                                @can('users.edit')
+                                                                <a class="dropdown-item"
+                                                                    wire:click="open('update', {{ $user->id }})"
+                                                                    href="#">Edit</a>
+                                                                @endcan
+                                                                @can('users.delete')
+                                                                <a class="dropdown-item"
+                                                                    wire:click="confirm({{ $user->id }}, false, true)"
+                                                                    href="#">Delete</a>
+                                                                @endcan
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                @endforeach
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div class="float-right">
+                                        {{ $trash->links() }}
+
+                                    </div>
+                                </div>
+                                <!-- End Trash -->
                             </div>
                         </div>
                     </div>
