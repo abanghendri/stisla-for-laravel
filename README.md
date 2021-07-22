@@ -6,7 +6,7 @@ This project use [livewire](https://laravel-livewire.com/) to build dynamic user
 ## Installation
 Clone the repo:
 ```shell
-git clone https://github.com/rehmatworks/stisla-laravel.git
+git clone https://github.com/abanghendri/stisla-for-laravel.git
 ```
 
 Install composer packages:
